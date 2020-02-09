@@ -3,7 +3,7 @@ const dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-var corsOptions = {
+const corsOptions = {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -15,7 +15,7 @@ admin.initializeApp({
     databaseURL: "https://our-chat-765d9.firebaseio.com"
 });
 
-require('./routers/search-user').searchUser(app, admin);
+require('./routers/search-user')(app, admin);
 
 
 const port = process.env.PORT || 5000;
