@@ -16,6 +16,8 @@ admin.initializeApp({
 });
 
 require('./routers/search-user')(app, admin);
+require('./routers/search-user-by-uid')(app, admin);
+require('./routers/add-friend')(app, admin);
 
 
 const port = process.env.PORT || 5000;

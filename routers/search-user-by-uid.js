@@ -2,21 +2,21 @@ const verifyToken = require('../middleware/verify-token');
 const insertUserIfNeeded = require('../functions/insert-user-if-needed');
 const checkIsFriend = require('../functions/check-is-friend');
 
-function searchUser(app, admin) {
-    app.get('/search-user', verifyToken(admin), async (req, res) => {
+function searchUserByUid(app, admin) {
+    app.get('/search-user-by-uid', verifyToken(admin), async (req, res) => {
         try {
-            const email = req.query.email;
+            const uid = req.query.uid;
 
             // get current user and insert into db if needed
-            const currentUserAuth = res.locals.currentUser;
-            let currentUser = await admin.auth().getUser(currentUserAuth.uid);
+            const currentUserUid = res.locals.currentUserUid;
+            let currentUser = await admin.auth().getUser(currentUserUid);
             currentUser = await currentUser.toJSON();
             currentUser = JSON.stringify(currentUser, (k, v) => v === undefined ? null : v);
             currentUser = JSON.parse(currentUser);
             await insertUserIfNeeded(admin, currentUser);
 
             // Check if user searched himself/herself
-            if (email === currentUser.email) {
+            if (uid === currentUser.uid) {
                 const error = new Error();
                 error.errorInfo = {
                     code: 'searchedSelf'
@@ -25,7 +25,7 @@ function searchUser(app, admin) {
             }
 
             // get searched user and insert into db if needed
-            let userRecord = await admin.auth().getUserByEmail(email);
+            let userRecord = await admin.auth().getUser(uid);
             userRecord = await userRecord.toJSON();
             userRecord = JSON.stringify(userRecord, (k, v) => v === undefined ? null : v);
             userRecord = JSON.parse(userRecord);
@@ -51,11 +51,6 @@ function searchUser(app, admin) {
                         status: 'notFound'
                     });
                     break;
-                case 'auth/invalid-email':
-                    await res.json({
-                        status: 'invalidEmail'
-                    });
-                    break;
                 case 'searchedSelf':
                     await res.json({
                         status: 'searchedSelf'
@@ -70,4 +65,4 @@ function searchUser(app, admin) {
     })
 }
 
-module.exports = searchUser;
+module.exports = searchUserByUid;
