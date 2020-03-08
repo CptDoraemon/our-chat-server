@@ -10,7 +10,6 @@ function addFriend(app, admin) {
 
             // get current user and insert into db if needed
             const currentUserUid = res.locals.currentUserUid;
-            console.log(friendUid, currentUserUid)
 
             // Check if user searched himself/herself
             if (friendUid === currentUserUid) {
